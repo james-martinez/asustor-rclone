@@ -1,0 +1,12 @@
+# Build artifacts
+*.apk
+*.zip
+build_pkg/
+rclone_temp/
+rclone_bin
+icon.png
+__pycache__/
+
+# System files
+.DS_Store
+Thumbs.db

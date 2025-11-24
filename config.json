@@ -1,0 +1,35 @@
+{
+  "general": {
+    "package": "rclone",
+    "name": "Rclone",
+    "version": "1.72.0",
+    "developer": "Rclone Team",
+    "maintainer": "User",
+    "email": "user@example.com",
+    "website": "https://rclone.org",
+    "architecture": "arm64",
+    "firmware": "4.0.0"
+  },
+  "adm-desktop": {
+    "app": {
+      "type": "custom",
+      "protocol": "http",
+      "port": 5572,
+      "url": "/"
+    },
+    "privilege": {
+      "accessible": "administrators",
+      "customizable": true
+    }
+  },
+  "register": {
+    "prerequisites": {
+      "share-folder": [
+        {
+          "name": "RcloneConfig",
+          "description": "Configuration folder for Rclone"
+        }
+      ]
+    }
+  }
+}
