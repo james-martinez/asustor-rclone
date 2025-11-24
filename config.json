@@ -4,9 +4,9 @@
     "name": "Rclone",
     "version": "1.72.0",
     "developer": "Rclone Team",
-    "maintainer": "User",
-    "email": "user@example.com",
-    "website": "https://rclone.org",
+    "maintainer": "James Martinez",
+    "email": "james-martinez@users.noreply.github.co",
+    "website": "https://github.com/james-martinez/asustor-rclone",
     "architecture": "arm64",
     "firmware": "4.0.0"
   },
