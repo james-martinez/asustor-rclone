@@ -22,8 +22,8 @@ case "$1" in
       mkdir -p "$CONF_DIR"
     fi
 
-    # Start rclone in daemon mode with Web GUI enabled
-    # We bind to 0.0.0.0 to allow access from outside localhost
+    # Start rclone in background using shell '&' operator
+    # Output is discarded to /dev/null to avoid filling disk space
     $BIN_PATH rcd \
       --rc-web-gui \
       --rc-addr=0.0.0.0:$PORT \
@@ -31,10 +31,12 @@ case "$1" in
       --rc-pass=$RC_PASS \
       --config=$CONF_FILE \
       --rc-web-gui-no-open-browser \
-      --daemon \
-      --pid-file=$PID_FILE
+      > /dev/null 2>&1 &
       
-    echo "$PKG_NAME started."
+    # Capture the Process ID (PID) of the last background command
+    echo $! > "$PID_FILE"
+      
+    echo "$PKG_NAME started with PID $(cat $PID_FILE)."
     ;;
 
   stop)

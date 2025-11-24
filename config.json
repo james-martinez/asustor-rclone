@@ -5,7 +5,7 @@
     "version": "1.72.0",
     "developer": "Rclone Team",
     "maintainer": "James Martinez",
-    "email": "james-martinez@users.noreply.github.co",
+    "email": "james-martinez@users.noreply.github.com",
     "website": "https://github.com/james-martinez/asustor-rclone",
     "architecture": "arm64",
     "firmware": "4.0.0"
