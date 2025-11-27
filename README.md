@@ -9,6 +9,11 @@ This project builds an `.apk` package for Asustor NAS devices running on ARM64 a
 - **Daemon mode** via Asustor's App Central
 - **Persistent Configuration** stored in `/volume1/RcloneConfig`
 
+## Ports Used
+- **5572 TCP**: Web GUI (configurable)
+- **7879 TCP**: DLNA HTTP Streaming (when in `dlna` mode)
+- **1900 UDP**: DLNA SSDP Discovery (when in `dlna` mode)
+
 ## Build Instructions
 
 1. Ensure you have Python 3 installed.
