@@ -45,6 +45,10 @@ fi
 # Load variables from config
 . "$SERVICE_CONF"
 
+# Set cache directory to a persistent location
+export XDG_CACHE_HOME="$CONF_DIR/cache"
+mkdir -p "$XDG_CACHE_HOME"
+
 # --- 2. Construct Command Flags ---
 # Always use the config file
 COMMON_FLAGS="--config=$CONF_FILE"
@@ -61,24 +65,30 @@ case "$1" in
 
     if [ "$RCLONE_MODE" = "rcd" ]; then
       # Standard GUI Mode
-      $BIN_PATH rcd $COMMON_FLAGS $GUI_FLAGS > /dev/null 2>&1 &
+      nohup $BIN_PATH rcd $COMMON_FLAGS $GUI_FLAGS > "$CONF_DIR/rclone.log" 2>&1 &
     
     elif [ "$RCLONE_MODE" = "mount" ]; then
       # Mount Mode
       if [ -z "$SERVE_REMOTE" ]; then echo "Error: SERVE_REMOTE missing"; exit 1; fi
       if [ ! -d "$MOUNT_POINT" ]; then mkdir -p "$MOUNT_POINT"; fi
 
-      $BIN_PATH mount "$SERVE_REMOTE" "$MOUNT_POINT" \
+      nohup $BIN_PATH mount "$SERVE_REMOTE" "$MOUNT_POINT" \
         --allow-other \
         --allow-non-empty \
         $SERVE_FLAGS \
-        $COMMON_FLAGS $GUI_FLAGS > /dev/null 2>&1 &
+        $COMMON_FLAGS $GUI_FLAGS > "$CONF_DIR/rclone.log" 2>&1 &
 
     elif [ -n "$RCLONE_MODE" ]; then
       # Universal Serve Mode
       if [ -z "$SERVE_REMOTE" ]; then echo "Error: SERVE_REMOTE missing"; exit 1; fi
+
+      # Specific handling for DLNA to enforce port 7879 (and SSDP port 1900 UDP implicitly)
+      EXTRA_FLAGS=""
+      if [ "$RCLONE_MODE" = "dlna" ]; then
+          EXTRA_FLAGS="--addr :7879"
+      fi
       
-      $BIN_PATH serve $RCLONE_MODE "$SERVE_REMOTE" $SERVE_FLAGS $COMMON_FLAGS $GUI_FLAGS > /dev/null 2>&1 &
+      nohup $BIN_PATH serve $RCLONE_MODE "$SERVE_REMOTE" $SERVE_FLAGS $COMMON_FLAGS $GUI_FLAGS $EXTRA_FLAGS > "$CONF_DIR/rclone.log" 2>&1 &
     else
       echo "Unknown mode"
       exit 1
