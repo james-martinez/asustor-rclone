@@ -6,7 +6,7 @@ import shutil
 import time
 
 # Configuration
-RCLONE_VERSION = "v1.72.0"
+RCLONE_VERSION = "v1.72.1"
 ARCH = "linux-arm64"
 DOWNLOAD_URL = f"https://downloads.rclone.org/{RCLONE_VERSION}/rclone-{RCLONE_VERSION}-{ARCH}.zip"
 APK_NAME = f"rclone_{RCLONE_VERSION}_arm64.apk"
