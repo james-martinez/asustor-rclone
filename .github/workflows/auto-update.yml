@@ -5,7 +5,7 @@ name: Auto-update rclone version
 # README.md and commits the change — which triggers build.yml to rebuild the APK.
 on:
   schedule:
-    - cron: '0 */6 * * *'
+    - cron: '0 6 * * 1'   # Mondays 06:00 UTC — rclone releases ~every 2–4 weeks, weekly is plenty
   workflow_dispatch: {}
 
 permissions:
