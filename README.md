@@ -1,18 +1,19 @@
 # Rclone for Asustor NAS (ARM64)
 
-This project builds an `.apk` package for Asustor NAS devices running on ARM64 architecture. It packages the official [Rclone](https://rclone.org/) binary with a Web GUI enabled by default.
+This project builds an `.apk` package for Asustor NAS devices running on ARM64 architecture. It packages the official [Rclone](https://rclone.org/) binary with an optional Web GUI (enabled via `ENABLE_WEB_GUI` in `service.conf`).
 
 ## Features
 - **Rclone v1.75.1** (ARM64)
-- **Web GUI** enabled on port `5572`
+- **Web GUI** on port `5572`
 - **Multiple Modes:** Supports `mount`, `dlna`, `webdav`, `sftp`, `http`, `docker`, and more.
 - **Daemon mode** via Asustor's App Central
 - **Persistent Configuration** stored in `/volume1/RcloneConfig`
 
 ## Ports Used
-- **5572 TCP**: Web GUI (configurable)
+- **5572 TCP**: Web GUI (fixed, set in `start-stop.sh`)
 - **7879 TCP**: DLNA HTTP Streaming (when in `dlna` mode)
 - **1900 UDP**: DLNA SSDP Discovery (when in `dlna` mode)
+- Other serve modes: configurable via `SERVE_FLAGS` (e.g. `--addr :8080`)
 
 ## Build Instructions
 
@@ -28,8 +29,18 @@ This project builds an `.apk` package for Asustor NAS devices running on ARM64 a
 1. Log in to ADM.
 2. Go to **App Central** > **Management** > **Manual Install**.
 3. Upload the `.apk` file.
-4. Once installed, click the icon to open the Web UI.
-5. **Default Credentials:** `admin` / `admin` (Change these immediately in the Rclone Web UI settings).
+4. The app starts in **DLNA mode** serving `/volume1/Media`.
+
+## First-Time Setup
+
+The Web GUI is **disabled by default** (the App Central icon will not connect until you enable it). To configure your remotes:
+
+1. Open **File Explorer** → `/volume1/RcloneConfig/` → edit `service.conf`.
+2. Set `ENABLE_WEB_GUI="true"` (GUI alongside the current mode) or `RCLONE_MODE="rcd"` (GUI only).
+3. Toggle the Rclone app **OFF** then **ON** in App Central.
+4. Browse to `http://<NAS-IP>:5572` — login **admin / admin** (change these immediately in the Web UI).
+5. Click **Configure** to set up your remotes (Google Drive, S3, WebDAV, ...). Remotes are stored in `/volume1/RcloneConfig/rclone.conf` and survive app upgrades.
+6. Point `SERVE_REMOTE` at your new remote (see below) and restart the app.
 
 ## Configuration & Modes
 
@@ -66,6 +77,7 @@ RCLONE_MODE="mount"
 SERVE_REMOTE="gdrive:"
 MOUNT_POINT="/volume1/RcloneMount"
 ```
+*Note: `mount` mode requires FUSE, which is not installed by default on ADM.*
 
 ### Example: WebDAV Server
 To serve local media over WebDAV on port 8080:
