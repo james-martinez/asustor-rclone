@@ -23,6 +23,7 @@
     }
   },
   "register": {
+    "port": ["5572", "7879"],
     "prerequisites": {
       "share-folder": [
         {

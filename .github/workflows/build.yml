@@ -18,6 +18,9 @@ jobs:
       with:
         python-version: '3.x'
 
+    - name: Install dependencies
+      run: pip install Pillow
+
     - name: Run build script
       run: python build_rclone_apk.py
 

@@ -19,6 +19,12 @@ if [ ! -d "$CONF_DIR" ]; then
   mkdir -p "$CONF_DIR"
 fi
 
+# APKG guidelines 2.1.2: working folders owned by admin:administrator
+if [ -d "$CONF_DIR" ]; then
+  chown admin:administrator "$CONF_DIR" 2>/dev/null
+  chmod 775 "$CONF_DIR" 2>/dev/null
+fi
+
 if [ ! -f "$SERVICE_CONF" ]; then
   echo "# Rclone Service Configuration" > "$SERVICE_CONF"
   echo "# ----------------------------------------------------------------" >> "$SERVICE_CONF"
@@ -48,6 +54,7 @@ fi
 # Set cache directory to a persistent location
 export XDG_CACHE_HOME="$CONF_DIR/cache"
 mkdir -p "$XDG_CACHE_HOME"
+chown admin:administrator "$XDG_CACHE_HOME" 2>/dev/null
 
 # --- 2. Construct Command Flags ---
 # Always use the config file
@@ -70,7 +77,7 @@ case "$1" in
     elif [ "$RCLONE_MODE" = "mount" ]; then
       # Mount Mode
       if [ -z "$SERVE_REMOTE" ]; then echo "Error: SERVE_REMOTE missing"; exit 1; fi
-      if [ ! -d "$MOUNT_POINT" ]; then mkdir -p "$MOUNT_POINT"; fi
+      if [ ! -d "$MOUNT_POINT" ]; then mkdir -p "$MOUNT_POINT"; chown admin:administrator "$MOUNT_POINT" 2>/dev/null; fi
 
       nohup $BIN_PATH mount "$SERVE_REMOTE" "$MOUNT_POINT" \
         --allow-other \

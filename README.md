@@ -21,7 +21,7 @@ This project builds an `.apk` package for Asustor NAS devices running on ARM64 a
    ```bash
    python3 build_rclone_apk.py
    ```
-3. The output file `rclone_v1.75.1_arm64.apk` will be generated in the current directory.
+3. The output file `rclone_1.75.1_arm64.apk` will be generated in the current directory.
 
 ## Installation
 

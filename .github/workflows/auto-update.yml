@@ -52,8 +52,8 @@ jobs:
 
           readme = open("README.md").read()
           readme = re.sub(r'Rclone v[0-9.]+', f'Rclone {latest}', readme)
-          readme = re.sub(r'rclone_v[0-9.]+_arm64\.apk',
-                          f'rclone_{latest}_arm64.apk', readme)
+          readme = re.sub(r'rclone_v?([0-9.]+)_arm64\.apk',
+                          f'rclone_{latest.lstrip("v")}_arm64.apk', readme)
           open("README.md", "w").write(readme)
 
           print(f"Updated {current} -> {latest}")

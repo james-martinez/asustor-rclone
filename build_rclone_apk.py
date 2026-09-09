@@ -9,7 +9,8 @@ import time
 RCLONE_VERSION = "v1.75.1"
 ARCH = "linux-arm64"
 DOWNLOAD_URL = f"https://downloads.rclone.org/{RCLONE_VERSION}/rclone-{RCLONE_VERSION}-{ARCH}.zip"
-APK_NAME = f"rclone_{RCLONE_VERSION}_arm64.apk"
+# APKG doc section 3.3: package file must be PACKAGE_VERSION_ARCHITECTURE.apk (no "v" tag)
+APK_NAME = f"rclone_{RCLONE_VERSION.lstrip('v')}_arm64.apk"
 ICON_URL = "https://raw.githubusercontent.com/rclone/rclone/master/graphics/logo/logo_symbol/logo_symbol_color_256px.png"
 
 def download_file(url, filename):
@@ -112,6 +113,19 @@ def build_apkg():
         print("No icon found, downloading default...")
         download_file(ICON_URL, "icon.png")
         shutil.copy("icon.png", os.path.join(control_dir, "icon.png"))
+
+    # APKG doc section 3.1.1: icon MUST be exactly 256x256 for manual installs.
+    # The upstream rclone logo asset is 256x257, so normalize it.
+    try:
+        from PIL import Image
+        icon_path = os.path.join(control_dir, "icon.png")
+        with Image.open(icon_path) as img:
+            if img.size != (256, 256):
+                print(f"Resizing icon {img.size} -> (256, 256)")
+                img = img.convert("RGBA").resize((256, 256), Image.Resampling.LANCZOS)
+                img.save(icon_path)
+    except ImportError:
+        print("WARNING: Pillow not installed; skipping icon size normalization")
 
     # 6. Create Package
     print("Creating internal tarballs...")
