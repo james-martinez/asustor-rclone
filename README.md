@@ -3,7 +3,7 @@
 This project builds an `.apk` package for Asustor NAS devices running on ARM64 architecture. It packages the official [Rclone](https://rclone.org/) binary with a Web GUI enabled by default.
 
 ## Features
-- **Rclone v1.72.0** (ARM64)
+- **Rclone v1.75.1** (ARM64)
 - **Web GUI** enabled on port `5572`
 - **Multiple Modes:** Supports `mount`, `dlna`, `webdav`, `sftp`, `http`, `docker`, and more.
 - **Daemon mode** via Asustor's App Central
@@ -21,7 +21,7 @@ This project builds an `.apk` package for Asustor NAS devices running on ARM64 a
    ```bash
    python3 build_rclone_apk.py
    ```
-3. The output file `rclone_v1.72.0_arm64.apk` will be generated in the current directory.
+3. The output file `rclone_v1.75.1_arm64.apk` will be generated in the current directory.
 
 ## Installation
 

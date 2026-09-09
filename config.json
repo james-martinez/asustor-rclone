@@ -2,7 +2,7 @@
   "general": {
     "package": "rclone",
     "name": "Rclone",
-    "version": "1.72.0",
+    "version": "1.75.1",
     "developer": "Rclone Team",
     "maintainer": "James Martinez",
     "email": "james-martinez@users.noreply.github.com",
