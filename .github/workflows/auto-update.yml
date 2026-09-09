@@ -1,0 +1,67 @@
+name: Auto-update rclone version
+
+# Polls the rclone GitHub API for the latest release. If it's newer than the
+# version pinned in this repo, updates build_rclone_apk.py, config.json and
+# README.md and commits the change — which triggers build.yml to rebuild the APK.
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for a newer rclone release and update
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 - <<'PYEOF'
+          import json, re, sys, urllib.request
+
+          def semver(tag):
+              return [int(x) for x in re.findall(r"\d+", tag)]
+
+          req = urllib.request.Request(
+              "https://api.github.com/repos/rclone/rclone/releases/latest",
+              headers={"Accept": "application/vnd.github+json"},
+          )
+          latest = json.load(urllib.request.urlopen(req))["tag_name"]
+
+          build = open("build_rclone_apk.py").read()
+          current = re.search(r'RCLONE_VERSION = "([^"]+)"', build).group(1)
+          print(f"current={current} latest={latest}")
+
+          if semver(latest) <= semver(current):
+              print("Already up to date.")
+              sys.exit(0)
+
+          open("build_rclone_apk.py", "w").write(
+              build.replace(f'RCLONE_VERSION = "{current}"',
+                            f'RCLONE_VERSION = "{latest}"'))
+
+          cfg = open("config.json").read()
+          cfg = re.sub(r'"version":\s*"[^"]+"',
+                       f'"version": "{latest.lstrip("v")}"', cfg, count=1)
+          open("config.json", "w").write(cfg)
+
+          readme = open("README.md").read()
+          readme = re.sub(r'Rclone v[0-9.]+', f'Rclone {latest}', readme)
+          readme = re.sub(r'rclone_v[0-9.]+_arm64\.apk',
+                          f'rclone_{latest}_arm64.apk', readme)
+          open("README.md", "w").write(readme)
+
+          print(f"Updated {current} -> {latest}")
+          PYEOF
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.com"
+          git add build_rclone_apk.py config.json README.md
+          git diff --cached --quiet && { echo "No changes to commit."; exit 0; }
+          git commit -m "chore: auto-update rclone to $(grep -oP 'RCLONE_VERSION = "\K[^"]+' build_rclone_apk.py)"
+          git push
